@@ -59,11 +59,13 @@ class CategoryController extends Controller
                 $dPath = public_path().'/uploads/category/thumb/'.$newImageName;
                 $img = Image::make($sPath);
                 // $img->resize(450, 600);
+                return $img->response('jpg');
+                
                 $img->fit(450, 600, function ($constraint) {
                     $constraint->upsize();
                 });
                 $img->save($dPath);
-
+                
                 $category->image = $newImageName;
                 $category->save();
             }
