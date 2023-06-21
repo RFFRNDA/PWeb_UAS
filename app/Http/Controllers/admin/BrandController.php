@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
 
 class BrandController extends Controller
 {
@@ -104,5 +105,26 @@ class BrandController extends Controller
                 'errors' => $validator->errors()
            ]);
         }
+    }
+
+    public function destroy($id, Request $request) {
+        $brand = Brand::find($id);
+
+        if (empty($brand)) {  
+            Session::flash('error','Brand not found');       
+            return response()->json([
+                'status' => true,
+                'message' =>  'Category not found'
+            ]);
+        }
+
+        $brand->delete();
+
+        Session::flash('success','Brand deleted successfully');
+
+        return response()->json([
+            'status' => true,
+            'message' =>  'Brand deleted successfully'
+        ]);
     }
 }

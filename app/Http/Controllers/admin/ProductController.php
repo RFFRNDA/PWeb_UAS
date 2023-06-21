@@ -10,14 +10,22 @@ use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use App\Http\Controllers\Controller;
+use App\Models\SubCategory;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::latest('id')->with('product_images')->paginate();
+        $products = Product::latest('id')->with('product_images');
+
+        if ($request->get('keyword') != "") {
+            $products = $products->where('title','like','%'.$request->keyword.'%');
+        }
+
+        $products = $products->paginate();
         
         $data['products'] = $products;
         return view('admin.products.list',$data);
@@ -33,9 +41,7 @@ class ProductController extends Controller
     }
 
     public function store(Request $request) {
-
       
-        exit();
         $rules = [
             'title' => 'required',
             'slug' => 'required|unique:products',
@@ -95,13 +101,13 @@ class ProductController extends Controller
                     $sourcePath = public_path().'/temp/'.$tempImageInfo->name;
                     $destPath = public_path().'/uploads/product/large/'.$imageName;
                     $image = Image::make($sourcePath);
-                    $image->resize(1400, null, function ($constraint) {
+                    $image->resize(1400, null, function($constraint) {
                         $constraint->aspectRatio();
                     });
                     $image->save($destPath);
 
                     // Small Image
-                    $destPath = public_path().'/uploads/product/small/'.$tempImageInfo->name;
+                    $destPath = public_path().'/uploads/product/small/'.$imageName;
                     $image = Image::make($sourcePath);
                     $image->fit(300, 300);
                     $image->save($destPath);
@@ -109,7 +115,7 @@ class ProductController extends Controller
             }
 
             Session::flash('success','Product added successfully');
-
+         
             return response()->json([
                 'status' => true,
                 'message' => 'Product added successfully'
@@ -121,6 +127,101 @@ class ProductController extends Controller
             'errors' => $validator->errors()
            ]);
         }
+    }
+
+    public function edit($id, Request $request) 
+    {
+        $product = Product::find($id);
+
+        $subCategories = SubCategory::where('category_id',$product->category_id)->get();
+
+        $data = [];
+        $data['product'] = $product;
+        $data['subCategories'] = $subCategories;
+        $categories = Category::orderBy('name','ASC')->get();
+        $brands = Brand::orderBy('name','ASC')->get();
+        $data['categories'] = $categories;
+        $data['brands'] = $brands;
+        return view('admin.products.edit',$data);
+    }
+
+    public function update($id, Request $request) {
+
+        $product = Product::find($id);
+
+        $rules = [
+            'title' => 'required',
+            'slug' => 'required|unique:products,slug,'.$product->id.',id',
+            'price' => 'required|numeric',
+            'sku' => 'required|unique:products,sku,'.$product->id.',id',
+            'track_qty' => 'required|in:Yes,No',
+            'category' => 'required|numeric',
+            'is_featured' => 'required|in:Yes,No',
+        ];
+
+        if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
+            $rules['qty'] = 'required|numeric';
+        }
+
+        $validator = Validator::make($request->all(),$rules);
+
+        if($validator->passes()) {
+              
+            $product->title = $request->title;
+            $product->slug = $request->slug;
+            $product->description = $request->description;
+            $product->price = $request->price;
+            $product->compare_price = $request->compare_price;
+            $product->sku = $request->sku;
+            $product->barcode = $request->barcode;
+            $product->track_qty = $request->track_qty;
+            $product->qty = $request->qty;
+            $product->status = $request->status;
+            $product->category_id = $request->category;
+            $product->sub_category_id = $request->sub_category;
+            $product->brand_id = $request->brand;
+            $product->is_featured = $request->is_featured;
+            $product->save();
+
+
+            // Save Gallery Pics\
+            Session::flash('success','Product updated successfully');
+         
+            return response()->json([
+                'status' => true,
+                'message' => 'Product updated successfully'
+               ]);
+
+        } else {
+           return response()->json([
+            'status' => false,
+            'errors' => $validator->errors()
+           ]);
+        }
+    }
+
+    public function destroy($productId, Request $request) {
+        $product = Product::find($productId);
+
+        if (empty($product)) {  
+            Session::flash('error','product not found');       
+            return response()->json([
+                'status' => true,
+                'message' =>  'product not found'
+            ]);
+        }
+
+        File::delete(public_path().'/uploads/product/thumb/'.$product->image);
+        File::delete(public_path().'/uploads/product/'.$product->image);
+
+        $product->delete();
+
+        Session::flash('success','product deleted successfully');
+
+        return response()->json([
+            'status' => true,
+            'message' =>  'product deleted successfully'
+        ]);
     }
 
 }

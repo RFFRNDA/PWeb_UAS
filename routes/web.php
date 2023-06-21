@@ -11,6 +11,7 @@ use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\TempImagesController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\ProductSubCategoryController;
+use App\Http\Controllers\FrontController;
 
 // use Illuminate\Support\Facades\Str;
 
@@ -25,9 +26,11 @@ use App\Http\Controllers\admin\ProductSubCategoryController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/',[FrontController::class,'index'])->name('front.home');
 
 
 Route::group(['prefix' => 'admin'],function(){
@@ -63,15 +66,22 @@ Route::group(['prefix' => 'admin'],function(){
         Route::get('/brands',[BrandController::class,'index'])->name('brands.index');
         Route::get('/brands/create',[BrandController::class, 'create'])->name('brands.create');
         Route::post('/brands',[BrandController::class, 'store'])->name('brands.store');
-        Route::get('/brands/{sbrand}/edit',[BrandController::class,'edit'])->name('brands.edit');
+        Route::get('/brands/{brand}/edit',[BrandController::class,'edit'])->name('brands.edit');
         Route::put('/brands/{brand}',[BrandController::class,'update'])->name('brands.update');
+        Route::delete('brands/{brand}',[BrandController::class,'destroy'])->name('brands.delete');
         
         // Produc Routes 
         Route::get('/products',[ProductController::class,'index'])->name('products.index');
         Route::get('/products/create',[ProductController::class, 'create'])->name('products.create');
         Route::post('/products',[ProductController::class, 'store'])->name('products.store');
+        Route::get('/products/{product}/edit',[ProductController::class,'edit'])->name('products.edit');
+        Route::put('/products/{product}',[ProductController::class,'update'])->name('products.update');
+        Route::delete('/products/{product}',[ProductController::class,'destroy'])->name('products.delete');
         
-        // Route::get('/product-subcategories',[ProductSubCategoryController::class,'index'])->name('product-subcategories.index');
+        Route::get('/product-subcategories',[ProductSubCategoryController::class,'index'])->name('product-subcategories.index');
+        
+        Route::post('/product-images/update',[ProductImageController::class,'update'])->name('product-images.update');
+        Route::delete('/product-images',[ProductImageController::class,'destroy'])->name('product-images.destroy');
 
 
         //temp-images.create

@@ -24,7 +24,7 @@ class CategoryController extends Controller
         $categories = $categories->paginate(10);
         
         return view('admin.category.list',compact('categories'));
-    }
+    } 
 
     public function create() {
         return view('admin.category.create');
@@ -83,7 +83,7 @@ class CategoryController extends Controller
                 'errors' =>  $validator->errors()
             ]);
         }
-    }
+    }   
 
     public function edit($categoryId, Request $request) {
         $category = Category::find($categoryId);

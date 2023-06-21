@@ -16,12 +16,28 @@ class CategoryFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    private function nameToSlug($name) {
+        // Convert name to lowercase
+        $slug = strtolower($name);
+    
+        // Replace non-alphanumeric characters with dashes
+        $slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
+    
+        // Remove leading and trailing dashes
+        $slug = trim($slug, '-');
+    
+        return $slug;
+    }
+
     public function definition(): array
     {
+
+        $name = fake()->name();
         return [
-            'name' => fake()->name(),
+            'name' => $name,
             'status' => rand(0,1),
-            'slug' => fake()->name()
+            'slug' => UtilsFactory::nameToSlug($name),
+            'image' => null,
         ];
     }
 }
