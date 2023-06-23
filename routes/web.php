@@ -3,15 +3,16 @@
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FrontController;
+use App\Http\Controllers\admin\ReportingController;
 use App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\AdminLoginController;
-use App\Http\Controllers\admin\TempImagesController;
+use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\ProductSubCategoryController;
-use App\Http\Controllers\FrontController;
 
 // use Illuminate\Support\Facades\Str;
 
@@ -30,20 +31,20 @@ use App\Http\Controllers\FrontController;
 //     return view('welcome');
 // });
 
-Route::get('/',[FrontController::class,'index'])->name('front.home');
 
+Route::get('/',[FrontController::class, 'index'])->name('front.home');
 
 Route::group(['prefix' => 'admin'],function(){
 
     Route::group(['middleware' => 'admin.guest'],function(){
         
         Route::get('/login',[AdminLoginController::class, 'index'])->name('admin.login');
+        // Route::get('/dashboard',[HomeController::class, 'index'])->name('admin.dashboard');
         Route::post('/authenticate',[AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
     });
 
     Route::group(['middleware' => 'admin.auth'],function(){
         
-        Route::get('/dashboard',[HomeController::class, 'index'])->name('admin.dashboard');
         Route::get('/logout',[HomeController::class, 'logout'])->name('admin.logout');
         
         // Category Routes
@@ -82,10 +83,17 @@ Route::group(['prefix' => 'admin'],function(){
         
         Route::post('/product-images/update',[ProductImageController::class,'update'])->name('product-images.update');
         Route::delete('/product-images',[ProductImageController::class,'destroy'])->name('product-images.destroy');
+        
+        
+        // Dashboard Routes
+        Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard.index');
 
+
+        // Reporting
+        Route::get('/reports',[ReportingController::class,'index'])->name('reports.index');
 
         //temp-images.create
-        Route::post('/upload-temp-image',[TempImagesController::class, 'create'])->name('temp-images.create');
+        // Route::post('/upload-temp-image',[TempImagesController::class, 'create'])->name('temp-images.create');
 
 
         Route::get('/getSlug',function(Request $request){

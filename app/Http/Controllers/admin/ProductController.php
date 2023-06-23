@@ -10,6 +10,7 @@ use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use App\Http\Controllers\Controller;
+use App\Models\History;
 use App\Models\SubCategory;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -47,20 +48,20 @@ class ProductController extends Controller
             'slug' => 'required|unique:products',
             'price' => 'required|numeric',
             'sku' => 'required|unique:products',
-            'track_qty' => 'required|in:Yes,No',
+            // 'track_qty' => 'required|in:Yes,No',
             'category' => 'required|numeric',
             'is_featured' => 'required|in:Yes,No',
         ];
 
-        if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
-            $rules['qty'] = 'required|numeric';
-        }
+        // if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
+        //     $rules['qty'] = 'required|numeric';
+        // }
 
         $validator = Validator::make($request->all(),$rules);
 
         if($validator->passes()) {
             
-            $product = new Product;
+            $product = new Product();
             $product->title = $request->title;
             $product->slug = $request->slug;
             $product->description = $request->description;
@@ -68,7 +69,6 @@ class ProductController extends Controller
             $product->compare_price = $request->compare_price;
             $product->sku = $request->sku;
             $product->barcode = $request->barcode;
-            $product->track_qty = $request->track_qty;
             $product->qty = $request->qty;
             $product->status = $request->status;
             $product->category_id = $request->category;
@@ -146,27 +146,44 @@ class ProductController extends Controller
     }
 
     public function update($id, Request $request) {
-
+        
         $product = Product::find($id);
-
+        
         $rules = [
             'title' => 'required',
             'slug' => 'required|unique:products,slug,'.$product->id.',id',
             'price' => 'required|numeric',
             'sku' => 'required|unique:products,sku,'.$product->id.',id',
-            'track_qty' => 'required|in:Yes,No',
+            // 'track_qty' => 'required|in:Yes,No',
             'category' => 'required|numeric',
             'is_featured' => 'required|in:Yes,No',
         ];
+        
+        // if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
+            //     $rules['qty'] = 'required|numeric';
+            // }
+            
+            $validator = Validator::make($request->all(),$rules);
+            
+            if($validator->passes()) {
+                
+                $history = new History();
+                $history->product_id = $id;
+                $history->title_bfr = $request->title;
+                $history->slug_bfr = $request->slug;
+                $history->description_bfr = $request->description;
+                $history->price_bfr = $request->price;
+                $history->compare_price_bfr = $request->compare_price;
+                $history->sku_bfr = $request->sku;
+                $history->barcode_bfr = $request->barcode;
+                $history->qty_bfr = $request->qty;
+                $history->status_bfr = $request->status;
+                $history->category_id_bfr = $request->category;
+                $history->sub_category_id_bfr = $request->sub_category;
+                $history->brand_id_bfr = $request->brand;
+                $history->is_featured_bfr = $request->is_featured;
+                $history->save();
 
-        if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
-            $rules['qty'] = 'required|numeric';
-        }
-
-        $validator = Validator::make($request->all(),$rules);
-
-        if($validator->passes()) {
-              
             $product->title = $request->title;
             $product->slug = $request->slug;
             $product->description = $request->description;
@@ -223,5 +240,8 @@ class ProductController extends Controller
             'message' =>  'product deleted successfully'
         ]);
     }
+
+
+  
 
 }

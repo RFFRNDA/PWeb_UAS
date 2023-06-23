@@ -25,10 +25,10 @@ class AdminLoginController extends Controller
             if(Auth::guard('admin')->attempt(['email' => $request->email, 
             'password'=> $request->password],$request->get('remember'))) {
 
-                $guest = Auth::guard('admin')->user();
+                $admin = Auth::guard('admin')->user();
 
-                if ($guest->role == 2){
-                    return redirect()->route('admin.dashboard');
+                if ($admin->role == 2){
+                    return redirect()->route('dashboard.index');
                 }else{
 
                     Auth::guard('admin')->logout();

@@ -6,7 +6,7 @@
         <div class="container-fluid my-2">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Products</h1>
+                    <h1>Product Item</h1>
                 </div>
                 <div class="col-sm-6 text-right">
                     <a href="{{ route('products.create') }}" class="btn btn-primary">New Product</a>
@@ -43,7 +43,7 @@
                     </div>
                 </form>
                 <div class="card-body table-responsive p-0">								
-                    <table class="table table-hover text-nowrap">
+                    <table class="table text-nowrap">
                         <thead>
                             <tr>
                                 <th width="60">ID</th>
@@ -59,21 +59,11 @@
                         <tbody>
                             @if ($products->isNotEmpty())
                                 @foreach ($products as $product)
-                                @php
-                                   $productImage = $product->product_images->first(); 
-                                @endphp
+ 
                                 <tr>
                                     <td>{{ $product->id }}</td>
-                                    <td>
-                                        @if (!empty($productImage->image))
-                                        <img src="{{ asset('uploads/product/small/'.$productImage->image) }}" class="img-thumbnail" width="50" >      
-                                        @else
-                                        <img src="{{ asset('assets/img/default-150x150.png') }}" class="img-thumbnail" width="50" />
-                                        @endif
-                                        
-         
-                                    </td>
-                                    <td><a href="#">{{ $product->title }}</a></td>
+                                    <td></td>
+                                    <td>{{ $product->title }}</td>
                                     <td>${{ $product->price }}</td>
                                     <td>{{ $product->qty }}</td>
                                     <td>{{ $product->sku }}</td>											

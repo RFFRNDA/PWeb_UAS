@@ -2,7 +2,7 @@
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
         <img src="{{ asset('assets/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">MY ONLINE SHOP</span>
+        <span class="brand-text font-weight-light">MY INVENTORY</span>
     </a>
     <!-- Sidebar -->
     <div class="sidebar">
@@ -12,7 +12,7 @@
                 <!-- Add icons to the links using the .nav-icon class
                     with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="dashboard.html" class="nav-link">
+                    <a href="{{ route('dashboard.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>																
@@ -40,18 +40,18 @@
                 <li class="nav-item">
                     <a href="{{ route('products.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-tag"></i>
-                        <p>Products</p>
+                        <p>Product Item</p>
                     </a>
                 </li>
                 
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('reports.index') }}" class="nav-link">
                         <!-- <i class="nav-icon fas fa-tag"></i> -->
-                        <i class="fas fa-truck nav-icon"></i>
-                        <p>Shipping</p>
+                        <i class="fas fa-history nav-icon"></i>
+                        <p>Reporting</p>
                     </a>
                 </li>							
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="orders.html" class="nav-link">
                         <i class="nav-icon fas fa-shopping-bag"></i>
                         <p>Orders</p>
@@ -74,7 +74,7 @@
                         <i class="nav-icon  far fa-file-alt"></i>
                         <p>Pages</p>
                     </a>
-                </li>							
+                </li>							 --}}
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

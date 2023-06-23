@@ -44,32 +44,6 @@ class CategoryController extends Controller
             $category->status = $request->status;
             $category->save(); 
 
-            // Save Image Here
-            if(!empty($request->image_id)){
-                $tempImage = TempImage::find($request->image_id);
-                $extArray = explode('.',$tempImage->name);
-                $ext = last($extArray);
-
-                $newImageName = $category->id.'.'.$ext;
-                $sPath = public_path().'/temp/'.$tempImage->name;
-                $dPath = public_path().'/uploads/category/'.$newImageName;
-                File::copy($sPath,$dPath);
-
-                // Generate Image Thumbnail
-                $dPath = public_path().'/uploads/category/thumb/'.$newImageName;
-                $img = Image::make($sPath);
-                // $img->resize(450, 600);
-                return $img->response('jpg');
-                
-                $img->fit(450, 600, function ($constraint) {
-                    $constraint->upsize();
-                });
-                $img->save($dPath);
-                
-                $category->image = $newImageName;
-                $category->save();
-            }
-
             Session::flash('success','Category added successfully');
 
             return response()->json([
@@ -120,39 +94,7 @@ class CategoryController extends Controller
             $category->slug = $request->slug;
             $category->status = $request->status;
             $category->save(); 
-
-            $oldImage = $category->image;
-
-            // Save Image Here
-            if(!empty($request->image_id)){
-                $tempImage = TempImage::find($request->image_id);
-                $extArray = explode('.',$tempImage->name);
-                $ext = last($extArray);
-
-                $newImageName = $category->id.'-'.time().'.'.$ext;
-                $sPath = public_path().'/temp/'.$tempImage->name;
-                $dPath = public_path().'/uploads/category/'.$newImageName;
-                File::copy($sPath,$dPath);
-
-                // Generate Image Thumbnail
-                $dPath = public_path().'/uploads/category/thumb/'.$newImageName;
-                $img = Image::make($sPath);
-                // $img->resize(450, 600);
-                $img->fit(450, 600, function ($constraint) {
-                    $constraint->upsize();
-                });
-                $img->save($dPath);
-
-                $category->image = $newImageName;
-                $category->save();
-
-                //Delete Old Images
-                File::delete(public_path().'/uploads/category/thumb/'.$oldImage);
-                File::delete(public_path().'/uploads/category/'.$oldImage);
-
-
-            }
-
+            
             Session::flash('success','Category update successfully');
 
             return response()->json([

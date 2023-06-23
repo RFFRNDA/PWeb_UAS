@@ -39,7 +39,7 @@
                                     <p></p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <div class="mb-3">
                                     <input type="hidden" id="image_id" name="image_id" value="">
                                     <label for="image">Image</label>
@@ -54,7 +54,7 @@
                                     <img width="250" src="{{ asset('uploads/category/thumb/'.
                                     $category->image) }}" alt="">
                                 </div>
-                                @endif
+                                @endif --}}
                             </div>									
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -84,7 +84,9 @@
 $("#categoryForm").submit(function(event){
     event.preventDefault();
     var element = $(this);
+    
     $("button[type=submit]").prop('disabled',true);
+
     $.ajax({
         url: '{{ route("categories.update",$category->id) }}',
         type: 'put',
@@ -157,27 +159,6 @@ $("#categoryForm").submit(function(event){
         });
     });
 
-    Dropzone.autoDiscover = false;    
-    const dropzone = $("#image").dropzone({ 
-        init: function() {
-            this.on('addedfile', function(file) {
-                if (this.files.length > 1) {
-                    this.removeFile(this.files[0]);
-                }
-            });
-        },
-        url:  "{{ route('temp-images.create') }}",
-        maxFiles: 1,
-        paramName: 'image',
-        addRemoveLinks: true,
-        acceptedFiles: "image/jpeg,image/png,image/gif",
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }, success: function(file, response){
-            $("#image_id").val(response.image_id);
-            //console.log(response)
-        }
-    });
 
 </script>
 @endsection

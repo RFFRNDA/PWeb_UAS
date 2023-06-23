@@ -29,8 +29,7 @@
                                         <div class="mb-3">
                                             <label for="title">Title</label>
                                             <input type="text" name="title" id="title" class="form-control" 
-                                            placeholder="Title" value={{ $product->title }}>	
-                                            <p class="error"></p>
+                                            placeholder="Title" maxlength="100" value="{{ $product->title }}">	
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -45,25 +44,13 @@
                                         <div class="mb-3">
                                             <label for="description">Description</label>
                                             <textarea name="description" id="description" cols="30" rows="10" 
-                                            class="summernote" placeholder="Description">{{ $product->description }}</textarea>
+                                            class="summernote" placeholder="Description">{{ $product->tilte }}</textarea>
                                         </div>
                                     </div>                                            
                                 </div>
                             </div>	                                                                      
                         </div>
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h2 class="h4 mb-3">Media</h2>								
-                                <div id="image" class="dropzone dz-clickable">
-                                    <div class="dz-message needsclick">    
-                                        <br>Drop files here or click to upload.<br><br>                                            
-                                    </div>
-                                </div>
-                            </div>	                                                                      
-                        </div>
-                       <div class="row" id="product-gallery">
 
-                       </div>
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h2 class="h4 mb-3">Pricing</h2>								
@@ -269,7 +256,7 @@
                 }
             },
             error: function(){
-                coonsol.log("Something went wrong");
+                console.log("Something went wrong");
             }
         });
     })
@@ -293,53 +280,6 @@
         });
     })
 
-    Dropzone.autoDiscover = false;    
-    const dropzone = $("#image").dropzone({ 
-
-        url:  "{{ route('temp-images.create') }}",
-        maxFiles: 10,
-        paramName: 'image',
-        addRemoveLinks: true,
-        acceptedFiles: "image/jpeg,image/png,image/gif",
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }, success: function(file, response){
-            // $("#image_id").val(response.image_id);
-            //console.log(response)
-
-            var html = `<div class="col-md-3" id="image-row-${response.image_id}"><div class="card">
-                <input type="hidden" name="imageArray[]" value="${response.image_id}">   
-                <img src="${response.ImagePath}" class="card-img-top" alt="">
-                <div class="card-body">
-                    <a href="javascript:void(0)" onclick="deleteImage(${response.image_id})" class="btn btn-danger">Delete</a>
-                </div>
-            </div></div>`;
-
-            $("#product-gallery").append(html);
-        }
-        // complete: function(file){
-        //     this.removeFile(file);
-        // }
-
-    });
-
-    function deleteImage(id) {
-        $("#image-row-"+id).remove();    
-        if (confirm("Are you sure want to delete image?")) {
-            $.ajax({
-            url: '{{ route("product-images.destroy") }}',
-            type: 'delete',
-            data: {id:id},
-            success: function(response){
-                if (responsse.status == true) {
-                    alert(response.message);
-                } else {
-                    alert(response.message);
-                }
-            },
-        });  
-    }
-}
 
 </script>
 @endsection

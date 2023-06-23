@@ -72,30 +72,30 @@ class BrandController extends Controller
     public function update($id, Request $request) {
         
         $brand = Brand::find($id);
-
         if (empty($brand)) {
             Session::flash('error','Record not found !');
 
-            return response()->jsin([
+            return response()->json([
                 'status' => false,
-                'notFound' => true
+                'notFound' => true,
+                'message' => 'Category not found'
             ]);
         }
-
+      
         $validator = Validator::make($request->all(),[
             'name' => 'required',
             'slug' => 'required|unique:brands,slug,'.$brand->id.',id',
         ]);
 
         if ($validator->passes()) {
-            $brand = new Brand();
+            // $brand = new Brand();
             $brand->name = $request->name;
             $brand->slug = $request->slug;
             $brand->status = $request->status;
             $brand->save();
 
             return response()->json([
-                'status' => true,
+                'status' => true,   
                 'message' => 'Brand added successfully'
             ]);
             
